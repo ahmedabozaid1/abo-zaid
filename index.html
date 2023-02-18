@@ -7,18 +7,33 @@
     <link rel="stylesheet" href="index.css">
 
 </head>
+<script>
+var CONTAINER_PADDING_HALF = "0.5em";
+
+pointer.style.width = "calc(100% /"+links.length+" - "+CONTAINER_PADDING_HALF+")"
+for(var i=0; i<links.length; i++){
+  var current = links[i];
+  current.dataset.order = i * 100 + "%";  
+  current.addEventListener("click", movePointer);
+}
+function movePointer(e) {
+  var order = e.currentTarget.dataset.order;
+  pointer.style.transform = "translate3d("+order+",0,0)"
+}
+</script>
 
 <body>
-    <nav class="navbar background">
-        <ul class="nav-list">
+    <nav class="nav" id="js-nav">
+        <div id="js-pointer" class="nav__pointer"></div>
+        <ul class="nav__list">
             <div class="logo">
                 <a href="/">
                     <img src="simple-logo.jpg">
                 </a>
             </div>
-            <li><a href="/about.html">About</a></li>
-            <li><a href="/projects.html">Projects</a></li>
-            <li><a href="/contacts.html">Contacts</a></li>
+            <li><a href="/about.html"><b>About</b></a></li>
+            <li><a href="/projects.html"><b>Projects</b></a></li>
+            <li><a href="/contacts.html"><b>Contacts</b></a></li>
         </ul>
     </nav>
     <h1 style="color: aliceblue; text-align: center;">Welcome</h1>
