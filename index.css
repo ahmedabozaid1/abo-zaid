@@ -69,28 +69,3 @@
      justify-content: center;
      color: white;
  }
-
- .nav {
-  position: relative;
-  padding: 1em;
-}
-
-.nav__pointer {
-  z-index: 1;
-  position: absolute;
-  top: 0.6em;
-  left: 1em;
-  background-color: #9b9b9b;
-  height: 1.8em;
-  transition: transform 0.25s ease-in-out;
-  border-radius: 0.3em;
-  will-change: transform;
-  backface-visibility: hidden;
-}
-
-.nav__list {
-  position: relative;
-  z-index: 2;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-}
