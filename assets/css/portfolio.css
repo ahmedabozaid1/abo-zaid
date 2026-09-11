@@ -35,13 +35,14 @@ footer{align-items:center}
 @media(max-width:580px){.job-details{padding-left:1.05rem}.job-details li{padding-left:.1rem}}
 
 /* Compact mobile navigation */
-.menu-icon{position:relative;width:18px;height:14px;display:inline-block}.menu-icon i{position:absolute;left:0;width:100%;height:1px;background:currentColor;transition:transform .22s ease,top .22s ease}.menu-icon i:first-child{top:3px}.menu-icon i:last-child{top:10px}.menu-toggle[aria-expanded="true"] .menu-icon i:first-child{top:6px;transform:rotate(45deg)}.menu-toggle[aria-expanded="true"] .menu-icon i:last-child{top:6px;transform:rotate(-45deg)}
+.menu-icon{position:relative;width:18px;height:14px;display:block;flex:0 0 18px}.menu-icon i{position:absolute;left:0;width:100%;height:1px;background:currentColor;transition:transform .22s ease,top .22s ease}.menu-icon i:first-child{top:3px}.menu-icon i:last-child{top:10px}.menu-toggle[aria-expanded="true"] .menu-icon i:first-child{top:6px;transform:rotate(45deg)}.menu-toggle[aria-expanded="true"] .menu-icon i:last-child{top:6px;transform:rotate(-45deg)}
 @media(max-width:800px){
   body.menu-open{overflow:hidden}
   body.menu-open::before{content:"";position:fixed;inset:0;background:rgba(4,8,10,.66);backdrop-filter:blur(3px);z-index:9}
   .site-header{min-height:72px;flex-wrap:nowrap;padding:12px 20px;gap:16px}
   .brand{position:relative;z-index:12;font-size:1.08rem;gap:9px}.brand img{width:34px;height:38px}
-  .menu-toggle{position:relative;z-index:12;display:inline-flex;align-items:center;gap:10px;min-height:42px;padding:8px 13px;border-color:#42545a;background:rgba(20,27,30,.82);font-size:.8125rem;letter-spacing:.04em;cursor:pointer;transition:border-color .18s ease,background .18s ease,color .18s ease}
+  .menu-toggle:not([hidden]){position:relative;z-index:12;display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:42px;padding:8px 13px;border-color:#42545a;background:rgba(20,27,30,.82);font-size:.8125rem;line-height:1;letter-spacing:.04em;cursor:pointer;transition:border-color .18s ease,background .18s ease,color .18s ease}
+  .menu-label{display:block;line-height:1}
   .menu-toggle:hover,.menu-toggle[aria-expanded="true"]{border-color:var(--accent);background:#172225;color:var(--accent)}
   html.js #navigation{position:absolute;z-index:11;top:calc(100% + 10px);left:20px;right:20px;width:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;padding:10px;background:rgba(20,27,30,.98);border:1px solid #3d5056;box-shadow:0 24px 70px rgba(0,0,0,.45);transform-origin:top right;transition:opacity .18s ease,transform .18s ease,visibility .18s ease}
   html.js #navigation:not(.is-open){display:grid;opacity:0;visibility:hidden;pointer-events:none;transform:translateY(-8px) scale(.98)}
