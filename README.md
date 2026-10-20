@@ -22,7 +22,7 @@ Open http://127.0.0.1:8000. No package installation or build is required. You ca
 
 The site also works on other static hosts: use the repository root as the publish directory, with no build command. Only publish site assets, not `.git` or editor metadata. `CNAME` is specific to GitHub Pages.
 
-These changes have been made in the local checkout only; the remote repository and production website have not been changed.
+GitHub Pages publishes the repository root from `master` through the existing automatic pages build and deployment workflow. No build command is required.
 
 ## Editing content
 
@@ -30,9 +30,9 @@ These changes have been made in the local checkout only; the remote repository a
 - `assets/css/portfolio.css`: colors, typography, desktop/mobile layouts, focus styles, reduced-motion support and print styling.
 - `assets/js/portfolio.js`: mobile navigation, current section indicator and copyright year.
 - `images/logo.jpg`, `images/me2.jpg`: original brand and portrait assets, used without modification.
-- `uploads/media/Ahmed_Abozaid_Senior_Software_Engineer_CV.pdf`: original downloadable résumé.
+- `uploads/media/Ahmed_Abozaid_Senior_Software_Engineer_CV.pdf`: downloadable résumé, replaced with the supplied `ahmed_abozaid_SE_CV.pdf` (October 2026 update).
 
-Experience, education, specialties, project details and the IEEE publication are grounded in the repository’s current Senior Software Engineer CV PDF. Selected projects summarize the documented work at Rayobyte, AllUp.app, Caudex.ai / Comverse.ai and Meet.LLC; they do not imply public source code or demos. Employment dates are based on the supplied CV, with AllUp.app’s end date corrected to June 2026 by Ahmed. Other “Present” labels are preserved as supplied, rather than independently verified with employers.
+Experience, education, specialties, project details and the IEEE publication are grounded in the supplied `ahmed_abozaid_SE_CV.pdf`. Selected projects summarize documented work at Rayobyte, AllUp.app and Caudex.ai / Comverse.ai; they do not imply public source code or demos. Employment dates follow the supplied CV, including AllUp.app’s June 2026 end date. Rayobyte responsibilities include cloud cost management, large-scale VPS fleet optimization, demand-based autoscaling, infrastructure right-sizing and capacity optimization. The downloadable PDF is an unchanged copy of the supplied file.
 
 The old template assets and `old demo/` remain available for reference but are not loaded by the redesigned homepage. Legacy `#intro`, `#work`, `#cv`, and `#contact` anchors still work. The PDF uses a relative URL so it works on both custom domains and repository subpaths.
 
