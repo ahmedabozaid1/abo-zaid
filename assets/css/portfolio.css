@@ -18,8 +18,10 @@ body{isolation:isolate}
 @media(prefers-reduced-motion:reduce),(hover:none),(pointer:coarse){.ambient-canvas{display:none}}
 @media print{.ambient-canvas{display:none}}
 
-/* Remove the black backdrop visually without altering the original logo. */
-.brand img{mix-blend-mode:screen;background:transparent}
+/* Display the supplied logo and portrait in their original colors. */
+.brand img{width:64px;height:64px;mix-blend-mode:normal;background:transparent}
+.portrait{filter:none;object-position:center 24%}
+@media(max-width:800px){.brand img{width:48px;height:48px}}
 
 footer{align-items:center}
 @media(max-width:580px){footer .footer-copyright #year{display:inline}}
@@ -54,7 +56,7 @@ footer{align-items:center}
   body.menu-open{overflow:hidden}
   body.menu-open::before{content:"";position:fixed;inset:0;background:rgba(4,8,10,.66);backdrop-filter:blur(3px);z-index:9}
   .site-header{min-height:72px;flex-wrap:nowrap;padding:12px 20px;gap:16px}
-  .brand{position:relative;z-index:12;font-size:1.08rem;gap:9px}.brand img{width:34px;height:38px}
+  .brand{position:relative;z-index:12;font-size:1.08rem;gap:9px}.brand img{width:48px;height:48px}
   .menu-toggle:not([hidden]){position:relative;z-index:12;display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:42px;padding:8px 13px;border-color:#42545a;background:rgba(20,27,30,.82);font-size:.8125rem;line-height:1;letter-spacing:.04em;cursor:pointer;transition:border-color .18s ease,background .18s ease,color .18s ease}
   .menu-label{display:block;line-height:1}
   .menu-toggle:hover,.menu-toggle[aria-expanded="true"]{border-color:var(--accent);background:#172225;color:var(--accent)}
