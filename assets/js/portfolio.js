@@ -115,3 +115,45 @@ if ('IntersectionObserver' in window) {
   window.addEventListener('load', updateProgress, { once: true });
   updateProgress();
 })();
+
+// Tilt the artwork over a stable hit area; keep touch and reduced motion static.
+(() => {
+  const stage = document.querySelector('.contact-logo-stage');
+  if (!stage) return;
+  const motion = matchMedia('(prefers-reduced-motion: reduce)');
+  const pointer = matchMedia('(hover: hover) and (pointer: fine)');
+  let bounds = null, frame = 0, tiltX = 0, tiltY = 0;
+  const enabled = () => !motion.matches && pointer.matches;
+  function reset() {
+    if (frame) cancelAnimationFrame(frame);
+    frame = 0; bounds = null;
+    stage.classList.remove('is-tilting');
+    stage.style.removeProperty('--logo-tilt-x');
+    stage.style.removeProperty('--logo-tilt-y');
+  }
+  function move(event) {
+    if (!enabled() || !bounds || event.pointerType !== 'mouse') return;
+    const x = Math.max(-.5, Math.min(.5, (event.clientX - bounds.left) / bounds.width - .5));
+    const y = Math.max(-.5, Math.min(.5, (event.clientY - bounds.top) / bounds.height - .5));
+    tiltX = -y * 18; tiltY = x * 24;
+    if (frame) return;
+    frame = requestAnimationFrame(() => {
+      frame = 0;
+      stage.style.setProperty('--logo-tilt-x', tiltX.toFixed(2) + 'deg');
+      stage.style.setProperty('--logo-tilt-y', tiltY.toFixed(2) + 'deg');
+    });
+  }
+  stage.addEventListener('pointerenter', event => {
+    if (!enabled() || event.pointerType !== 'mouse') return;
+    bounds = stage.getBoundingClientRect();
+    stage.classList.add('is-tilting');
+    move(event);
+  });
+  stage.addEventListener('pointermove', move, { passive: true });
+  stage.addEventListener('pointerleave', reset);
+  window.addEventListener('blur', reset);
+  window.addEventListener('resize', reset, { passive: true });
+  window.addEventListener('scroll', reset, { passive: true });
+  motion.addEventListener('change', reset);
+  pointer.addEventListener('change', reset);
+})();

@@ -135,3 +135,25 @@ body{background:var(--bg)}
 @media(max-width:800px){.contact-grid{grid-template-columns:minmax(0,1fr) 190px;gap:28px}.contact-grid h2{font-size:2.6rem}.contact-grid .email{font-size:1.4rem}.contact-grid .email span{margin-left:8px}}
 @media(max-width:580px){.portrait{aspect-ratio:.84;clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,0 100%)}.portrait-wrap::after{inset:-7px 6px 10px -6px}.profile-note{padding:0}.contact-grid{grid-template-columns:minmax(0,1fr) 112px;gap:14px}.contact-grid h2{font-size:clamp(1.7rem,6vw,2.2rem)}.contact-grid .email{font-size:clamp(.95rem,3.8vw,1.25rem)}.contact-grid .email span{margin-left:0}.contact-grid .socials{gap:16px;flex-wrap:wrap;font-size:.8rem}.contact-brand{align-self:center}}
 @media print{.contact-grid{display:block}.contact-brand{display:none}.portrait{mask-image:none;-webkit-mask-image:none}}
+
+/* Keep the portrait area free of extra panels, glow, and framing. */
+.hero::before,.portrait-wrap::before,.portrait-wrap::after{content:none;display:none}
+
+/* Two open corners frame the portrait without a background panel. */
+.portrait-wrap::before,.portrait-wrap::after{content:"";display:block;position:absolute;width:64px;height:64px;inset:auto;z-index:2;background:none;clip-path:none;opacity:1;border:0;pointer-events:none}
+.portrait-wrap::before{top:-10px;left:-10px;border-top:1px solid #7eafb7;border-left:1px solid #7eafb7}
+.portrait-wrap::after{right:-10px;bottom:-8px;border-bottom:1px solid #7eafb7;border-right:1px solid #7eafb7}
+@media(max-width:580px){.portrait-wrap::before,.portrait-wrap::after{width:30px;height:30px}.portrait-wrap::before{top:-6px;left:-6px}.portrait-wrap::after{right:-6px;bottom:-6px}}
+
+/* Frosted glass sits behind the transparent portrait. */
+.portrait-wrap,.portrait-wrap:hover{background:linear-gradient(135deg,rgba(186,225,230,.025),rgba(47,88,101,.012));backdrop-filter:blur(6px) saturate(103%);-webkit-backdrop-filter:blur(6px) saturate(103%);border:1px solid rgba(171,214,222,.2);box-shadow:inset 0 1px 0 rgba(218,246,247,.06),0 8px 24px rgba(0,9,15,.06);border-radius:2px}
+
+/* Pointer-driven depth for the transparent contact logo. */
+.contact-logo-stage{position:relative;isolation:isolate;perspective:900px;align-self:center;justify-self:end;width:100%}
+.contact-logo-stage::before{content:"";position:absolute;inset:12% -8% 0;z-index:-1;pointer-events:none;opacity:0;background:radial-gradient(ellipse at 50% 55%,rgba(82,166,182,.19),transparent 68%);transition:opacity .35s ease}
+.contact-logo-stage .contact-brand{transform:rotateX(0deg) rotateY(0deg);transform-origin:50% 52%;transition:transform .4s cubic-bezier(.2,.7,.2,1),filter .35s ease;backface-visibility:hidden}
+@media(hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){
+.contact-logo-stage.is-tilting::before{opacity:1}
+.contact-logo-stage.is-tilting .contact-brand{transform:rotateX(var(--logo-tilt-x,0deg)) rotateY(var(--logo-tilt-y,0deg)) translateY(-6px) scale(1.045);filter:drop-shadow(0 22px 16px rgba(0,7,12,.4)) drop-shadow(0 0 9px rgba(128,208,218,.16));transition:transform .12s ease-out,filter .3s ease}
+}
+@media(prefers-reduced-motion:reduce){.contact-logo-stage .contact-brand{transform:none;transition:none}.contact-logo-stage::before{display:none}}
