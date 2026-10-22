@@ -50,96 +50,68 @@ if ('IntersectionObserver' in window) {
   document.querySelectorAll('main section[id]').forEach((section) => observer.observe(section));
 }
 
-// Decorative canvas: no input interception, no layout work during pointer moves.
+
+// Interactive cover-inspired planes. No animation loop runs while idle.
 (() => {
+  const root = document.documentElement;
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
   const pointer = matchMedia('(hover: hover) and (pointer: fine)');
-  const canvas = document.createElement('canvas');
-  canvas.className = 'ambient-canvas';
-  canvas.setAttribute('aria-hidden', 'true');
-  document.body.prepend(canvas);
-  const ctx = canvas.getContext('2d');
-  if (!ctx) { canvas.remove(); return; }
-  let width = 0, height = 0, frame = 0, previous = 0, particles = [];
-  const mouse = { x: 0, y: 0, targetX: 0, targetY: 0, active: false, strength: 0 };
-  function resize() {
-    width = innerWidth; height = innerHeight;
-    const ratio = Math.min(devicePixelRatio || 1, 2);
-    canvas.width = Math.round(width * ratio);
-    canvas.height = Math.round(height * ratio);
-    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-    particles = Array.from({ length: Math.min(65, Math.floor(width * height / 18000)) }, () => ({
-      x: Math.random() * width, y: Math.random() * height,
-      vx: (Math.random() - .5) * .22, vy: (Math.random() - .5) * .22,
-      size: .7 + Math.random() * 1.1, phase: Math.random() * Math.PI * 2
-    }));
-    if (!mouse.active) {
-      mouse.x = mouse.targetX = width * .65;
-      mouse.y = mouse.targetY = height * .35;
-    }
-  }
-  function glow(x, y, radius, color) {
-    const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
-    gradient.addColorStop(0, color);
-    gradient.addColorStop(1, 'rgba(70,150,165,0)');
-    ctx.fillStyle = gradient;
-    ctx.fillRect(x - radius, y - radius, radius * 2, radius * 2);
-  }
-  function draw(time) {
-    frame = 0;
-    const delta = Math.min((time - previous) / 16.67 || 1, 2);
-    previous = time;
-    ctx.clearRect(0, 0, width, height);
-    mouse.x += (mouse.targetX - mouse.x) * .075 * delta;
-    mouse.y += (mouse.targetY - mouse.y) * .075 * delta;
-    mouse.strength += ((mouse.active ? 1 : 0) - mouse.strength) * .035 * delta;
-    const t = time * .00012;
-    glow(width * (.7 + Math.sin(t) * .13), height * (.3 + Math.cos(t * .7) * .15), Math.min(width, 650), 'rgba(52,115,132,.10)');
-    glow(width * (.2 + Math.cos(t * .8) * .12), height * .8, 450, 'rgba(64,113,125,.07)');
-    if (mouse.strength > .01) {
-      glow(mouse.x, mouse.y, 310, `rgba(105,192,199,${.13 * mouse.strength})`);
-      glow(mouse.x, mouse.y, 95, `rgba(142,220,221,${.055 * mouse.strength})`);
-    }
-    particles.forEach((p, i) => {
-      p.x += p.vx * delta; p.y += p.vy * delta;
-      const dx = mouse.x - p.x, dy = mouse.y - p.y;
-      const distance = Math.hypot(dx, dy);
-      if (distance < 230 && distance > 1 && mouse.strength > .01) {
-        const force = (1 - distance / 230) * .28 * mouse.strength * delta;
-        p.x += dx / distance * force; p.y += dy / distance * force;
-      }
-      if (p.x < -10) p.x = width + 10;
-      if (p.x > width + 10) p.x = -10;
-      if (p.y < -10) p.y = height + 10;
-      if (p.y > height + 10) p.y = -10;
-      const near = Math.max(0, 1 - distance / 260) * mouse.strength;
-      ctx.fillStyle = `rgba(153,207,211,${.17 + .08 * Math.sin(t * 4 + p.phase) + near * .38})`;
-      ctx.beginPath(); ctx.arc(p.x, p.y, p.size + near * .6, 0, Math.PI * 2); ctx.fill();
-      for (let j = i + 1; j < particles.length; j++) {
-        const q = particles[j], gap = Math.hypot(p.x - q.x, p.y - q.y);
-        if (gap > 130) continue;
-        ctx.strokeStyle = `rgba(135,198,206,${(1 - gap / 130) * (.055 + near * .17)})`;
-        ctx.lineWidth = .7;
-        ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y); ctx.stroke();
+  const scene = document.createElement('div');
+  scene.className = 'diagonal-scene';
+  scene.setAttribute('aria-hidden', 'true');
+  for (let i = 0; i < 4; i++) scene.append(document.createElement('span'));
+  document.body.prepend(scene);
+  const surfaces = document.querySelectorAll('.project, .education-card, .publication, .mention-link, .portrait-wrap');
+  let frame = 0, active = null, point = null, x = 0, y = 0, progress = 0;
+  function schedule() {
+    if (frame) return;
+    frame = requestAnimationFrame(() => {
+      frame = 0;
+      root.style.setProperty('--plane-x', x + 'px');
+      root.style.setProperty('--plane-y', y + 'px');
+      root.style.setProperty('--reading-progress', progress);
+      if (active && point) {
+        const rect = active.getBoundingClientRect();
+        active.style.setProperty('--light-x', point.x - rect.left + 'px');
+        active.style.setProperty('--light-y', point.y - rect.top + 'px');
       }
     });
-    frame = requestAnimationFrame(draw);
   }
-  function sync() {
-    cancelAnimationFrame(frame); frame = 0; previous = 0;
-    const enabled = !motion.matches && pointer.matches;
-    canvas.hidden = !enabled;
-    if (enabled && !document.hidden) frame = requestAnimationFrame(draw);
+  const enabled = () => !motion.matches && pointer.matches;
+  function reset() {
+    x = y = 0; active = point = null;
+    surfaces.forEach(surface => surface.classList.remove('is-lit'));
+    schedule();
+  }
+  function updateProgress() {
+    const total = root.scrollHeight - innerHeight;
+    progress = total > 0 ? Math.min(1, Math.max(0, scrollY / total)) : 0;
+    schedule();
   }
   window.addEventListener('pointermove', event => {
-    if (event.pointerType !== 'mouse') return;
-    mouse.targetX = event.clientX; mouse.targetY = event.clientY; mouse.active = true;
+    if (!enabled() || event.pointerType !== 'mouse') return;
+    x = (event.clientX / innerWidth - .5) * 26;
+    y = (event.clientY / innerHeight - .5) * 20;
+    point = { x: event.clientX, y: event.clientY };
+    schedule();
   }, { passive: true });
-  document.documentElement.addEventListener('pointerleave', () => { mouse.active = false; });
-  window.addEventListener('blur', () => { mouse.active = false; });
-  window.addEventListener('resize', resize, { passive: true });
-  document.addEventListener('visibilitychange', sync);
-  motion.addEventListener('change', sync);
-  pointer.addEventListener('change', sync);
-  resize(); sync();
+  surfaces.forEach(surface => {
+    surface.addEventListener('pointerenter', event => {
+      if (!enabled()) return;
+      active = surface; point = { x: event.clientX, y: event.clientY };
+      surface.classList.add('is-lit'); schedule();
+    });
+    surface.addEventListener('pointerleave', () => {
+      surface.classList.remove('is-lit');
+      if (active === surface) active = point = null;
+    });
+  });
+  root.addEventListener('pointerleave', reset);
+  window.addEventListener('blur', reset);
+  motion.addEventListener('change', reset);
+  pointer.addEventListener('change', reset);
+  window.addEventListener('scroll', updateProgress, { passive: true });
+  window.addEventListener('resize', updateProgress, { passive: true });
+  window.addEventListener('load', updateProgress, { once: true });
+  updateProgress();
 })();
